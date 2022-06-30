@@ -4,25 +4,17 @@ robot = RobotArm()
 
 robot.home()
 
-grasp_jpos = [0.134, 0.8, 0.729, 1.014, 0.008]
+grasp_jpos = [0,-0.255,-1.349,-1.466,0.029]
 mid_jpos = [0.2, 0, 0.5, 0, 0]
-drop_jpos = [-0.8, 0.8, 0.729, 1.014, 0.008]
+drop_jpos = [0, -0.125, 0.724, 0.98, 0]
 
-robot.open_gripper()
-robot.move_arm_jpos(grasp_jpos)
-
-
-while True:
+for i in range(3):
+    robot.open_gripper()
+    robot.move_arm_jpos(grasp_jpos)
+    achieved_grasp_jpos = robot.get_arm_jpos()
+    print(achieved_grasp_jpos)
     robot.close_gripper()
-    gripper_state = robot.get_gripper_state()
-    robot.move_arm_jpos(mid_jpos)
-
-
-    if gripper_state > 0.1:
-        robot.move_arm_jpos(drop_jpos)
-        robot.open_gripper()
-        break
-
+    robot.move_arm_jpos(drop_jpos)
     robot.open_gripper()
 
 robot.home()
