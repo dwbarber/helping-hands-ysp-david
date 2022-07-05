@@ -5,25 +5,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 robot.passive_mode()
-
-bot_pos = robot.get_arm_jpos()
 x=0
-
-arr = np.array([0,0,0,0,0,0])
-arr2d = arr.reshape(6,1)
+arr = np.zeros([10,6])
 
 for i in range(10):
-    x += 1
+    bot_pos = robot.get_arm_jpos()
     bas = bot_pos[0]
     sho = bot_pos[1]
     elb = bot_pos[2]
     wri = bot_pos[3]
     wrirot = bot_pos[4]
-    np.append(arr2d, [[x,bas,sho,elb,wri,wrirot]], axis=0)
-    time.sleep(0.2)
+    arr[x] = [x, bas, sho, elb,wri,wrirot]
+    time.sleep(1)
+    x += 1
 
-plt.scatter(arr2d[0], arr2d[1])
-plt.title('Base Positions')
-plt.xlabel('Time (S)')
-plt.ylabel('Servo Value')
+
+plt.scatter(arr[0], arr[1])
+
+print(arr)
 
