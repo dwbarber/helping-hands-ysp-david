@@ -20,7 +20,8 @@ for i in range(10):
     x += 1
 
 
-plt.scatter(arr[0], arr[1])
-
 print(arr)
+plt.scatter(arr[:,0],arr[:,1])
+plt.show()
+
 
