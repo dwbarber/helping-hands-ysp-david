@@ -10,7 +10,7 @@ bot_pos = robot.get_arm_jpos()
 x=0
 
 arr = np.array([0,0,0,0,0,0])
-arr2d = arr.reshape(5,1)
+arr2d = arr.reshape(6,1)
 
 for i in range(10):
     x += 1
