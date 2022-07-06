@@ -16,12 +16,16 @@ for i in range(10):
     wri = bot_pos[3]
     wrirot = bot_pos[4]
     arr[x] = [x, bas, sho, elb,wri,wrirot]
-    time.sleep(1)
+    time.sleep(0.2)
     x += 1
 
 
 print(arr)
 plt.scatter(arr[:,0],arr[:,1])
+plt.scatter(arr[:,0],arr[:,2])
+plt.scatter(arr[:,0],arr[:,3])
+plt.scatter(arr[:,0],arr[:,4])
+plt.scatter(arr[:,0],arr[:,5])
 plt.show()
 
 
