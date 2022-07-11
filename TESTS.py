@@ -1,8 +1,19 @@
 import cv2
-import  matplotlib.pyplot as plt
 
-img = cv2.imread(r"C:\Users\lowel\Downloads\connect 4.jpg")
-cropped = img[110:550,0:520]
-plt.imshow(cropped)
-plt.show()
+cam = cv2.VideoCapture(1)
 
+cv2.namedWindow("test")
+
+while True:
+    ret, frame = cam.read()
+    k = cv2.waitKey(1)
+    if k%256 == 32:
+        # SPACE pressed
+        img_name = "Current.png".format
+        cv2.imwrite(img_name, frame)
+        print("{} written!".format(img_name))
+        Image =
+
+cam.release()
+
+cv2.destroyAllWindows()
