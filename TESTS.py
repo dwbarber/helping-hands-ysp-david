@@ -12,8 +12,7 @@ while True:
         img_name = "Current.png".format
         cv2.imwrite(img_name, frame)
         print("{} written!".format(img_name))
-        Image =
+
 
 cam.release()
-
 cv2.destroyAllWindows()
