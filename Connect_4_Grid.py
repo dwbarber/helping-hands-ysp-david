@@ -37,50 +37,46 @@ for i in range(rows):
         else:
             arr[i][j] = 0
 
-
 print(arr)
 #print(cropped_board[-10,-37])
 #print(len(cropped_board))
 #print(x1,y1,height,width)
-plt.imshow(cropped_board)
-plt.show()
+
 
 cv2.imshow('cropped',cropped_board)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
-def check(max_value_left, max_value_right, direction):
+#checks for horizontal strings
+def horizontal_check(i,j):
+    evaluation = 1
+    for x in range(2):
+        m = 1
+        if (j + m) > 6:
+            break
+        elif (arr[i][j+m] == 1):
+            evaluation += 1
+            m += 1
+        else:
+            break
+    for x in range(2):
+        n = 1
+        if (j - n) < 0:
+            break
+        elif (arr[i][j-n] == 1):
+            evaluation += 1
+            n += 1
+        else:
+            break
+    print(evaluation)
 
-#determines the maximum boundaries of the position
-def boundaries (i, j):
-    if j = 6:
-        max_value_left = 4
-        max_value_right = 0
-    elif j = 5:
-        max_value_left = 4
-        max_value_right = 1
-    elif j = 4:
-        max_value_left = 4
-        max_value_right = 2
-    elif j = 3:
-        max_value_left = 3
-        max_value_right = 3
-    elif j = 2:
-        max_value_left = 2
-        max_value_right = 4
-    elif j = 1:
-        max_value_left = 1
-        max_value_right = 4
-    elif j = 0:
-        max_value_left = 0
-        max_value_right = 4
+horizontal_check(5,1)
 
+#def lowest_zeros(i,j):
+    #for i in range(rows):
+    #    for j in range(columns):
+    #        if (arr[i][j] = -1 or 1) & (arr[i-1][j]=0) :
+    #            horizontal_check(i,j, true)
+     #           verticle_check(i,j)
 
-
-def lowest_zeros(i,j):
-    for i in range(rows):
-        for j in range(columns):
-            if (arr[i][j] = -1 or 1) & (arr[i-1][j]=0) :
-                check(i,j)
-            else:
 
