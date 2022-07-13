@@ -1,4 +1,5 @@
 from nuro_arm import RobotArm
+import keyboard as kb
 robot = RobotArm()
 
 x = 0.19
@@ -16,20 +17,25 @@ ee_pos_drop5 = [x,-0.0381*2,z]
 ee_pos_drop6 = [x,-0.0381*3,z]
 
 for i in range(7):
-    if i == 0:
-        run_val = ee_pos_drop0
-    elif i == 1:
-        run_val = ee_pos_drop1
-    elif i == 2:
-        run_val == ee_pos_drop2
-    elif i == 3:
-        run_val == ee_pos_drop3
-    elif i == 4:
-        run_val == ee_pos_drop4
-    elif i == 5:
-        run_val == ee_pos_drop5
-    else:
-        run_val == ee_pos_drop6
+    while True:
+        c = input('what column would you like to choose?')
+
+        if c == 1:
+            run_val = ee_pos_drop0
+        elif c == 2:
+            run_val = ee_pos_drop1
+        elif c == 3:
+            run_val == ee_pos_drop2
+        elif c == 4:
+            run_val == ee_pos_drop3
+        elif c == 5:
+            run_val == ee_pos_drop4
+        elif c ==6:
+            run_val == ee_pos_drop5
+        elif c == 7:
+            run_val == ee_pos_drop6
+        break
+
     robot.open_gripper()
     robot.move_arm_jpos(grasp_jpos)
     robot.close_gripper()

@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # create the cropped image based on downloaded image
-img = cv2.imread(r"C:\Users\lowel\Downloads\connect 4 2.jpg")
+img = cv2.imread(r"C:\Users\lowel\Downloads\connect 4.jpg")
 hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-#cropped_board = hsv_img[110:550, 0:520]
-cropped_board = hsv_img[80:320, 80:400]
+cropped_board = hsv_img[110:550, 0:520]
+#cropped_board = hsv_img[80:320, 80:400]
 shape = cropped_board.shape
 
 # find values that are necessary to access specific pixels
