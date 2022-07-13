@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # create the cropped image based on downloaded image
-img = cv2.imread(r"C:\Users\lowel\Downloads\connect 4.jpg")
-hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-cropped_board = hsv_img[110:550, 0:520]
-# cropped_board = img[110:350, 0:520]
+img = cv2.imread(r"C:\Users\lowel\Downloads\connect 4 2.jpg")
+hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+#cropped_board = hsv_img[110:550, 0:520]
+cropped_board = hsv_img[80:320, 80:400]
 shape = cropped_board.shape
 
 # find values that are necessary to access specific pixels
@@ -20,7 +20,7 @@ y1 = (height // 2)
 x1 = (width // 2)
 
 # define an array that is the correct size with values that are all zeros
-arr = np.zeros([6, 7])
+arr = np.zeros([6, 7], dtype=int)
 
 
 # Take the average hue of a certain range of pixels
@@ -47,15 +47,16 @@ for i in range(rows):
     for j in range(columns):
         h = average_color(i, j)
 
-        if (h < 30) & (h > 11):
+        if (85 < h)&(h < 105):
             arr[i][j] = 1
 
-        elif (h < 10) & (h > 0):
+        elif (110 <h) & (h < 130) :
 
             arr[i][j] = -1
 
         else:
             arr[i][j] = 0
+        print(h)
 
 print(arr)
 
@@ -153,7 +154,7 @@ def horizontal_check(i, j):
 evaluations = np.zeros((7), dtype=int)
 for x in range(7):
     for y in reversed(range(6)):
-        if (arr[y][x] == 0):
+        if arr[y][x] == 0:
             diagonal1 = diag1_check(y, x)
             diagonal2 = diag2_check(y, x)
             horizontal = horizontal_check(y, x)
@@ -164,8 +165,6 @@ for x in range(7):
 
 print(evaluations)
 
-hsv_img = cv2.cvtColor(img, cv2.COLOR_HSV2RGB)
-cropped_board = hsv_img[110:550, 0:520]
 cv2.imshow('cropped', cropped_board)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
