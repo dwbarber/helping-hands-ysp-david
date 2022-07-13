@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 img = cv2.imread(r"C:\Users\lowel\Downloads\connect 4.jpg")
 hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 cropped_board = hsv_img[110:550, 0:520]
-#cropped_board = img[110:350, 0:520]
+# cropped_board = img[110:350, 0:520]
 shape = cropped_board.shape
 
 # find values that are necessary to access specific pixels
@@ -22,8 +22,8 @@ x1 = (width // 2)
 # define an array that is the correct size with values that are all zeros
 arr = np.zeros([6, 7])
 
-# upload values to the array
-# **opencv Interprets colors in BGR and Matplotlib is in RGB**
+
+# Take the average hue of a certain range of pixels
 def average_color(i, j):
     y = y1 + (height * i)
     x = x1 + (width * j)
@@ -57,11 +57,7 @@ for i in range(rows):
         else:
             arr[i][j] = 0
 
-
 print(arr)
-# print(cropped_board[-10,-37])
-# print(len(cropped_board))
-# print(x1,y1,height,width)
 
 
 def diag1_check(i, j):
@@ -104,7 +100,7 @@ def diag2_check(i, j):
     # checks values to the left and up of the point
     n = 1
     for x in range(3):
-        if ((i + n)>5 ) or ((j - n) < 0):
+        if ((i + n) > 5) or ((j - n) < 0):
             break
         elif arr[i + n][j - n] == 1:
             evaluation += 1
@@ -168,7 +164,8 @@ for x in range(7):
 
 print(evaluations)
 
-
+hsv_img = cv2.cvtColor(img, cv2.COLOR_HSV2RGB)
+cropped_board = hsv_img[110:550, 0:520]
 cv2.imshow('cropped', cropped_board)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
