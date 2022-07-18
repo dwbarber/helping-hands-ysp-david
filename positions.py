@@ -8,7 +8,7 @@ robot.passive_mode()
 x=0
 arr = np.zeros([10,6])
 
-for i in range(10):
+for i in range(1):
     bot_pos = robot.get_arm_jpos()
     bas = bot_pos[0]
     sho = bot_pos[1]

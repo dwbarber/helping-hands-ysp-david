@@ -3,27 +3,24 @@ import numpy as np
 import keyboard
 import imutils as im
 from nuro_arm import RobotArm
-robot = RobotArm()
 import matplotlib.pyplot as plt
 
-def simple_ai():
-    cap = cv2.VideoCapture(0)
+robot = RobotArm()
+cam_jpos = [0.0, 0.01256637, -1.59174028, 1.07651908, 2.09020631, 0.00837758]
 
+
+def simple_ai():
+    robot.move_arm_jpos(cam_jpos)
+
+    cap = cv2.VideoCapture(0)
     if not (cap.isOpened()):
         print("Could not open video device")
-
-    # cap.set(cv2.CAP_PROP_FRAME_WIDTH, 600)
-    # cap.set(cv2.CAP_PROP_FRAME_HEIGHT,800)
-
     for i in range(1):
         # Capture frame-by-frame
         ret, frame = cap.read()
 
         # Display the resulting frame
         # cv2.imshow('preview',frame)
-
-        # gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-        # cv2.imshow('frame', gray)
 
         cv2.imshow('frame', frame)
 
@@ -35,13 +32,11 @@ def simple_ai():
     print('Creating...' + name)
     cv2.imwrite(name, frame)
 
-    cap.release()
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-    # create the cropped image based on downloaded image
-    img = cv2.imread(r"frame.jpg")
+    # create the cropped image based on camera image
+    src = cv2.imread(r"frame.jpg")
+    img = cv2.rotate(src, cv2.ROTATE_180)
     hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-    #cropped_board = hsv_img[110:550, 0:520]
+    # cropped_board = hsv_img[110:550, 0:520]
     cropped_board = hsv_img[80:320, 80:400]
     shape = cropped_board.shape
 
@@ -57,7 +52,6 @@ def simple_ai():
 
     # define an array that is the correct size with values that are all zeros
     arr = np.zeros([6, 7], dtype=int)
-
 
     # Take the average hue of a certain range of pixels
     def average_color(i, j):
@@ -75,7 +69,6 @@ def simple_ai():
                 old_value += new
                 cropped_board[y - 5 + o, x - 5 + p] = [0, 0, 100]
         return average
-
 
     # upload values to the array
     # **opencv Interprets colors in BGR and Matplotlib is in RGB**
@@ -95,7 +88,6 @@ def simple_ai():
             print(h)
 
     print(arr)
-
 
     def diag1_check(i, j, color):
         evaluation = 1
@@ -121,7 +113,6 @@ def simple_ai():
                 break
         return evaluation
 
-
     def diag2_check(i, j, color):
         evaluation = 1
         # checks values to the right and up of the point
@@ -146,7 +137,6 @@ def simple_ai():
                 break
         return evaluation
 
-
     def verticle_check(i, j, color):
         evaluation = 1
         # checks values below the point
@@ -160,7 +150,6 @@ def simple_ai():
             else:
                 break
         return evaluation
-
 
     def horizontal_check(i, j, color):
         evaluation = 1
@@ -186,7 +175,6 @@ def simple_ai():
                 break
         return evaluation
 
-
     def evaluate(color):
         evaluations = np.zeros((7), dtype=int)
         for x in range(7):
@@ -200,8 +188,6 @@ def simple_ai():
                     evaluations[x] = final_eval
                     break
         return evaluations
-
-
 
     red_evaluation = evaluate(-1)
     yel_evaluation = evaluate(1)
@@ -217,20 +203,19 @@ def simple_ai():
 
     print(column)
 
-
     x = 0.19
     y = 0.0381
     z = 0.27
 
-    run_val = [0.19,0,0.27]
-    grasp_jpos = [0,-0.255,-1.349,-1.466,0.029]
-    ee_pos_drop0 = [x,0.1143, z]
-    ee_pos_drop1 = [x,0.0762, z]
-    ee_pos_drop2 = [x,0.0381, z]
-    ee_pos_drop3 = [x,0,z]
-    ee_pos_drop4 = [x,-0.0381,z]
-    ee_pos_drop5 = [x,-0.0762,z]
-    ee_pos_drop6 = [x,-0.1143,z]
+    run_val = [0.19, 0, 0.27]
+    grasp_jpos = [0, -0.255, -1.349, -1.466, 0.029]
+    ee_pos_drop0 = [x, 0.1143, z]
+    ee_pos_drop1 = [x, 0.0762, z]
+    ee_pos_drop2 = [x, 0.0381, z]
+    ee_pos_drop3 = [x, 0, z]
+    ee_pos_drop4 = [x, -0.0381, z]
+    ee_pos_drop5 = [x, -0.0762, z]
+    ee_pos_drop6 = [x, -0.1143, z]
 
     eepos = [ee_pos_drop0, ee_pos_drop1, ee_pos_drop2, ee_pos_drop3, ee_pos_drop4, ee_pos_drop5, ee_pos_drop6]
 
@@ -241,12 +226,11 @@ def simple_ai():
     robot.open_gripper()
     robot.home()
 
-
-
     cv2.imshow('cropped', cropped_board)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-for i in range(1):
+
+while True:
     keyboard.wait('esc')
     simple_ai()
