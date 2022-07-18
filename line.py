@@ -34,7 +34,6 @@ for i in range(7):
             run_val == ee_pos_drop5
         elif c == 7:
             run_val == ee_pos_drop6
-        break
 
     robot.open_gripper()
     robot.move_arm_jpos(grasp_jpos)
