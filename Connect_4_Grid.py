@@ -30,10 +30,18 @@ def simple_ai():
     print('Creating...' + name)
     cv2.imwrite(name, frame)
 
+    # camera correction for distortion using values from calibration
+    calib_result_pickle = pickle.load(open("camera_calib_pickle.p", "rb"))
+    mtx = calib_result_pickle["mtx"]
+    optimal_camera_matrix = calib_result_pickle["optimal_camera_matrix"]
+    dist = calib_result_pickle["dist"]
+
+
     # create the cropped image based on camera image
     src = cv2.imread(r"frame.jpg")
-    img = cv2.rotate(src, cv2.ROTATE_180)
-    hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    distorted_image = cv2.rotate(src, cv2.ROTATE_180)
+    undistorted_image = cv2.undistort(distorted_image, mtx, dist, None, optimal_camera_matrix)
+    hsv_img = cv2.cvtColor(undistorted_image, cv2.COLOR_RGB2HSV)
     # cropped_board = hsv_img[110:550, 0:520]
     cropped_board = hsv_img[130:375, 175:490]
     shape = cropped_board.shape
