@@ -14,10 +14,10 @@ src = cv2.imread(r"C:\Users\lowel\PycharmProjects\helping-hands-ysp-david\frame.
 # distorted_image = cv2.rotate(src, cv2.ROTATE_180)
 undistorted_image = cv2.undistort(src, mtx, dist, None, optimal_camera_matrix)
 
-cropped_board = undistorted_image[235:322, 420:575]
+cropped_board = undistorted_image[188:397, 190:489]
 
-cv2.imshow('frame', undistorted_image)
-cv2.imwrite('image.jpg', undistorted_image)
+cv2.imshow('frame', cropped_board)
+cv2.imwrite('image.jpg', cropped_board)
 cap.release()
 cv2.waitKey(0)
 cv2.destroyAllWindows()

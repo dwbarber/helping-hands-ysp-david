@@ -1,11 +1,9 @@
 import cv2
 import time
 cap = cv2.VideoCapture(1)
-#cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-#cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 u = 0
-for i in range(50):
+for i in range(100):
     if not (cap.isOpened()):
         print("Could not open video device")
 

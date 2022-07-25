@@ -5,7 +5,7 @@ import numpy as np  # Import the NumPy scientific computing library
 # https://automaticaddison.com
 # Description: Detect corners on a chessboard
 
-filename = r"C:\Users\lowel\PycharmProjects\helping-hands-ysp-david\pictures\frame_0.jpg"
+filename = r"C:\Users\lowel\PycharmProjects\helping-hands-ysp-david\pictures\frame_3.jpg"
 
 # Chessboard dimensions
 number_of_squares_X = 10  # Number of chessboard squares along the x-axis

@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
 import keyboard
-import imutils as im
+import time
 from nuro_arm import RobotArm
-import matplotlib.pyplot as plt
+import pickle
+import random
 
 robot = RobotArm()
-cam_jpos = [0.0, -1.59174028, 1.15, 2.09020631, -0.1]
+cam_jpos = [0.00, -1.59174028,  1.03044239, 2.0943951, -0.09215338]
 
 
 def simple_ai():
@@ -15,35 +16,41 @@ def simple_ai():
     cap = cv2.VideoCapture(1)
     if not (cap.isOpened()):
         print("Could not open video device")
-    for i in range(1):
+    for i in range(5):
         # Capture frame-by-frame
         ret, frame = cap.read()
 
         # Display the resulting frame
         # cv2.imshow('preview',frame)
+        if i == 4:
 
-        # Waits for a user input to quit the application
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+            # Waits for a user input to quit the application
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+            name = 'frame.jpg'
+            print('Creating...' + name)
+            cv2.imwrite(name, frame)
+        time.sleep(0.2)
 
-    name = 'frame.jpg'
-    print('Creating...' + name)
-    cv2.imwrite(name, frame)
+    # create the cropped image based on camera image
+    src = cv2.imread(r"frame.jpg")
+    img = cv2.rotate(src, cv2.ROTATE_180)
+    hsv_img = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
+    # cropped_board = hsv_img[110:550, 0:520]
+    # cropped_board = hsv_img[110:385, 160:513]
 
-    # camera correction for distortion using values from calibration
     calib_result_pickle = pickle.load(open("camera_calib_pickle.p", "rb"))
     mtx = calib_result_pickle["mtx"]
     optimal_camera_matrix = calib_result_pickle["optimal_camera_matrix"]
     dist = calib_result_pickle["dist"]
 
+    # create the cropped image based on camera image r'C:\Users\lowel\OneDrive\Pictures\cameraCal\img0.jpg'
+    src = hsv_img
+    # distorted_image = cv2.rotate(src, cv2.ROTATE_180)
+    undistorted_image = cv2.undistort(src, mtx, dist, None, optimal_camera_matrix)
 
-    # create the cropped image based on camera image
-    src = cv2.imread(r"frame.jpg")
-    distorted_image = cv2.rotate(src, cv2.ROTATE_180)
-    undistorted_image = cv2.undistort(distorted_image, mtx, dist, None, optimal_camera_matrix)
-    hsv_img = cv2.cvtColor(undistorted_image, cv2.COLOR_RGB2HSV)
-    # cropped_board = hsv_img[110:550, 0:520]
-    cropped_board = hsv_img[130:375, 175:490]
+    cropped_board = undistorted_image[202:412, 190:500]
+    cv2.imshow('frame', cropped_board)
     shape = cropped_board.shape
 
     # find values that are necessary to access specific pixels
@@ -65,15 +72,18 @@ def simple_ai():
         x = x1 + (width * j)
         n = 1
         old_value = 0
+        average = 0
 
-        for p in range(10):
-            for o in range(10):
-                colors = cropped_board[y - 5 + o, x - 5 + p]
-                new = colors[0]
-                average = (new + old_value) / n
-                n += 1
-                old_value += new
-                cropped_board[y - 5 + o, x - 5 + p] = [0, 0, 100]
+        for p in range(5):
+            for o in range(5):
+                colors = cropped_board[y - 2 + o, x - 2 + p]
+                newH = colors[0]
+                # newS = colors[1]
+                if newH > 75 & newH < 130:
+                    average = (newH + old_value) / n
+                    n += 1
+                    old_value += newH
+                cropped_board[y - 2 + o, x - 2 + p] = [0, 0, 100]
         return average
 
     # upload values to the array
@@ -82,7 +92,7 @@ def simple_ai():
         for j in range(columns):
             h = average_color(i, j)
 
-            if (85 < h) & (h < 105):
+            if (85 < h) & (h < 96):
                 arr[i][j] = 1
 
             elif (110 < h) & (h < 130):
@@ -91,7 +101,7 @@ def simple_ai():
 
             else:
                 arr[i][j] = 0
-            print(h)
+            print(i, j, h)
 
     print(arr)
 
@@ -200,18 +210,22 @@ def simple_ai():
 
     print(yel_evaluation)
 
-    if max(red_evaluation) >= 4:
+    if max(red_evaluation) >= 4:  # checks to see if
         result = np.where(red_evaluation == np.amax(red_evaluation))
-        column = result[0]
+        column = int(result[0])
     else:
         result = np.where(yel_evaluation == np.amax(yel_evaluation))
-        column = result[0]
-
+        if len(result) % 2 == 0:
+            n = random.randint(int(len(result)/2 - 1), int(len(result)/2))
+            column = int(result[n])
+        else:
+            column = int(np.median(result))
+    print(result)
     print(column)
 
     x = 0.19
     y = 0.0381
-    z = 0.27
+    z = 0.3
 
     run_val = [0.19, 0, 0.27]
     grasp_jpos = [0, -0.255, -1.349, -1.466, 0.029]
@@ -228,15 +242,15 @@ def simple_ai():
     robot.open_gripper()
     robot.move_arm_jpos(grasp_jpos)
     robot.close_gripper()
-    robot.move_hand_to(eepos[column[0]])
+    robot.move_hand_to(eepos[column])
     robot.open_gripper()
     robot.home()
 
-    cv2.imshow('cropped', cropped_board)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.imshow('cropped', cropped_board)
+    # .waitKey(0)
+    # cv2.destroyAllWindows()
 
 
-while True:
+for i in range(20):
     keyboard.wait('esc')
     simple_ai()
