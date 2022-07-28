@@ -6,17 +6,17 @@ import numpy as np
 
 robot.passive_mode()
 x=0
-arr = np.zeros([10,6])
+arr = np.zeros([50,6])
 
-for i in range(1):
+for i in range(50):
     bot_pos = robot.get_arm_jpos()
     bas = bot_pos[0]
     sho = bot_pos[1]
     elb = bot_pos[2]
     wri = bot_pos[3]
     wrirot = bot_pos[4]
-    arr[x] = [x, bas, sho, elb,wri,wrirot]
-    time.sleep(0.2)
+    arr[x] = [x, bas, sho, elb,wri, wrirot]
+    time.sleep(0.1)
     x += 1
 
 

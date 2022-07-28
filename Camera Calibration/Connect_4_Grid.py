@@ -217,41 +217,36 @@ def simple_ai(color, layout):
         copy_result = np.copy(result)
         print(result)
         for i in range(len(result)):
-            hypo_board[red_evaluation_y[copy_result[i]]][copy_result[i]] = 1  #
-            if i >= 1:
-                hypo_board[yel_evaluation_y[copy_result[i - 1]]][copy_result[i - 1]] = 0
-            # updates the array with the best hypothetical solution
+            hypo_board[red_evaluation_y[result[i]]][result[i]] = 1  # updates the array with the best hypothetical solution
             print('hypoboard', hypo_board)
             hypo_eval = evaluate(-1, hypo_board)[0]  # evaluates board assuming its opponents turn
             print('hypoeval' ,hypo_eval)
             if max(hypo_eval) >= 4:  # checks to see if opponent will win
                 yel_evaluation[result[i]] = 0
-            copy_result = np.where(yel_evaluation == np.amax(yel_evaluation))[0]
-            # finds the best place our of options in result to place token
-        best_red = np.zeros(len(copy_result))
-        for i in range(len(result)):
-            best_red[i] = red_evaluation[[copy_result[i]]]
-        n = np.zeros(len(copy_result))
-        n = np.where(best_red == np.amax(best_red))[0]
-        column = int(np.median(n))
-        print(column)
+                copy_result = np.where(yel_evaluation == np.amax(yel_evaluation))[0]
+        if len(copy_result) % 2 == 0:
+            n = random.randint(int(len(copy_result) / 2 - 1), int(len(copy_result) / 2))
+            column = int(copy_result[n])
+        else:
+            column = int(np.median(copy_result))
+    print('column',column)
     return column
 
 
 def move(column):
-    x = 0.19
+    x = 0.15
     y = 0.0381
-    z = 0.3
+    z = 0.33
 
     run_val = [0.19, 0, 0.27]
-    grasp_jpos = [0, -0.255, -1.349, -1.466, 0.029]
-    ee_pos_drop0 = [x, 0.1143, z]
-    ee_pos_drop1 = [x, 0.0762, z]
+    grasp_jpos = [0, -0.255, -1.4, -1.5, 0.029]
+    ee_pos_drop0 = [x, 0.1043, z]
+    ee_pos_drop1 = [x, 0.0702, z]
     ee_pos_drop2 = [x, 0.0381, z]
     ee_pos_drop3 = [x, 0, z]
     ee_pos_drop4 = [x, -0.0381, z]
-    ee_pos_drop5 = [x, -0.0762, z]
-    ee_pos_drop6 = [x, -0.1143, z]
+    ee_pos_drop5 = [x, -0.0702, z]
+    ee_pos_drop6 = [x, -0.1043, z]
 
     eepos = [ee_pos_drop0, ee_pos_drop1, ee_pos_drop2, ee_pos_drop3, ee_pos_drop4, ee_pos_drop5, ee_pos_drop6]
 
