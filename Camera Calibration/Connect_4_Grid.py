@@ -262,16 +262,16 @@ def move(column):
     # cv2.destroyAllWindows()
 
 #board = np.array([[ 0,  0,  0,  0 , 0 , 0 , 0],
- #                [ 0 , 0 , 0 , 0 , 0 , 0 , 0],
-  #               [ 0, -1 , 0 , 0 , 0 , 0 , 0],
-   #              [ 0 , 1 , 0 , 0 , 0 , 0 ,-1],
-    #             [ 0 , 1 , 0 ,-1 ,-1 , 0 , 1],
-     #            [-1 , 1 , 1 , 1 ,-1 , 1 , 1]])
+              #   [ 0 , 0 , 0 , 0 , 0 , 0 , 0],
+              #   [ 0, -1 , 0 , 0 , 0 , 0 , 0],
+              #   [ 0 , 1 , 0 , 0 , 0 , 0 ,-1],
+              #   [ 0 , 1 , 0 ,-1 ,-1 , 0 , 1],
+              #   [-1 , 1 , 1 , 1 ,-1 , 1 , 1]])
 
 
 for i in range(20):
     robot = RobotArm()
-    cam_jpos = [0.00, -1.59174028, 1.03044239, 2.0943951, -0.09215338]
+    cam_jpos = [0.00, -1.59174028, 1.03044239, 2.0943951, 0.0]
     # define an array that is the size of the board with values that are all zeros
     arr = np.zeros([6, 7], dtype=int)
     keyboard.wait('esc')
