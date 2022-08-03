@@ -2,12 +2,13 @@ import cv2
 import numpy as np
 import keyboard
 import time
+import random
 from nuro_arm import RobotArm
 import pickle
 
 
 def take_pic():  # takes a picture and processes it into an array, returns the array
-    # robot.move_arm_jpos(cam_jpos)
+    robot.move_arm_jpos(cam_jpos)
 
     cap = cv2.VideoCapture(1)
     if not (cap.isOpened()):
@@ -42,7 +43,6 @@ def take_pic():  # takes a picture and processes it into an array, returns the a
     undistorted_image = cv2.undistort(src, mtx, dist, None, optimal_camera_matrix)
 
     cropped_board = undistorted_image[192:405, 175:485]
-    cv2.imshow('frame', cropped_board)
     shape = cropped_board.shape
 
     # find values that are necessary to access specific pixels
@@ -229,8 +229,7 @@ def evaluate(color, layout):
 def score(depth, layout):
     offense_factor = 1
     defense_factor = 1
-    return offense_factor*max(evaluate(1, layout)) \
-           + defense_factor*min(evaluate(-1, layout))
+    return offense_factor * max([*evaluate(1, layout),0]) + defense_factor * min([*evaluate(-1, layout),0])
 
 
 def valid_positions(layout):
@@ -268,46 +267,43 @@ def minmax(max_depth, depth, layout):
         else:
             return min(scores_list)
 
+
 def determine_action(max_depth, layout):
     action_scores = []
-    for col in valid_positions(layout):
+    valid_pos = np.array(valid_positions(layout))
+    for col in valid_pos:
         new_hypoboard = create_hypoboard(0, layout, col)
         action_scores.append(minmax(max_depth, 1, new_hypoboard))
     print('action_scores', action_scores)
-    bestaction = valid_positions(layout)[np.argmax(action_scores)]
-    return bestaction
-
-
-#print("score of board", score(1,board))
-#print("valid_positions", valid_positions(board))
-#print("minmax", minmax(1,0,board))
-import time
-t = time.time()
-determine_action(4, board)
-print(time.time() - t)
-# print(score(1,create_hypoboard(0,board,col=1)))
+    print('max', max(action_scores))
+    bestaction = np.where(np.asarray(action_scores) == max(action_scores))[0]
+    print()
+    print(bestaction)
+    prob = 1/(abs(valid_pos[bestaction] - 3) + 0.5)**0.5
+    n = np.random.choice(bestaction, p=prob/prob.sum())
+    return valid_pos[n]
 
 
 def move(column):
     x = 0.15
     y = 0.0381
-    z = 0.35
+    z = 0.33
 
-    grasp_jpos = [0, -0.255, -1.349, -1.466, 0.0]
-    ee_pos_drop0 = [x, 0.1143, z]
-    ee_pos_drop1 = [x, 0.0762, z]
+    run_val = [0.19, 0, 0.27]
+    grasp_jpos = [0, -0.255, -1.4, -1.5, 0.029]
+    ee_pos_drop0 = [x, 0.0950, z]
+    ee_pos_drop1 = [x, 0.068, z]
     ee_pos_drop2 = [x, 0.0381, z]
     ee_pos_drop3 = [x, 0, z]
     ee_pos_drop4 = [x, -0.0381, z]
-    ee_pos_drop5 = [x, -0.0762, z]
-    ee_pos_drop6 = [x, -0.1143, z]
-
+    ee_pos_drop5 = [x, -0.068, z]
+    ee_pos_drop6 = [x, -0.0950, z]
     eepos = [ee_pos_drop0, ee_pos_drop1, ee_pos_drop2, ee_pos_drop3, ee_pos_drop4, ee_pos_drop5, ee_pos_drop6]
 
     robot.open_gripper()
-    robot.move_arm_jpos(grasp_jpos)
+    robot.move_arm_jpos(grasp_jpos, 1.7)
     robot.close_gripper()
-    robot.move_hand_to(eepos[column])
+    robot.move_hand_to(eepos[column], speed=1.7)
     robot.open_gripper()
     robot.home()
 
@@ -316,24 +312,23 @@ def move(column):
     # cv2.destroyAllWindows()
 
 
-board = np.array([[ 0,  0,  0,  0 , 0 , 0 , 0],
-                [ 0 , 0 , 0 , 0 , 0 , 0 , 0],
-                [ 0,  0 , 0 , 0 , 0 , 0 , 0],
-                [ 0 , 0 , 0 , 0 , 0 , 0 , 0],
-                [ 0 , 0 , 1 , 1 , 0 , 0 , 0],
-                [ 1,  1 , -1 , -1 ,-1 , 1 , 0]])
+# board = np.array([[ 0,  0,  0,  0 , 0 , 0 , 0],
+#                 [ 0 , 0 , 0 , 0 , 0 , 0 , 0],
+#                 [ 0,  0 , 0 , 0 , 0 , 0 , 0],
+#                 [ 0 , 0 , 0 , 0 , 0 , 0 , 0],
+#                 [ 0 , 0 , 1 , 1 , 0 , 0 , 0],
+#                 [ 1,  1 , -1 , -1 ,-1 , 1 , 0]])
 
 
 for i in range(20):
-    # robot = RobotArm()
+    robot = RobotArm()
     cam_jpos = [0.00, -1.59174028, 1.03044239, 2.0943951, 0.0]
     # define an array that is the size of the board with values that are all zeros
     arr = np.zeros([6, 7], dtype=int)
     keyboard.wait('esc')
     print("calculating...")
-    # board = take_pic()
-    print("board", board)
-    pick = determine_action(1, board)
+    board = take_pic()
+    pick = determine_action(4, board)
     print('column', pick)
-    break
-    # move(pick)
+    move(pick)
+    robot.move_arm_jpos(cam_jpos,1.7)
